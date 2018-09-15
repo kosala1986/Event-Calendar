@@ -1,0 +1,53 @@
+@import 'color';
+ .calender-container {
+     .header-container {
+         padding: 10px;
+         margin: 20px 0px 20px 0px;
+         font-size: 24px;
+    }
+     .event-container {
+         margin-bottom: 20px;
+         .time-bar {
+             display: flex;
+             border-right: 1px solid $black;
+             flex-direction: column;
+             .hours-slot {
+                 position: relative;
+                 height: 120px;
+                 text-align: center;
+                 display: flex;
+                 span {
+                     display: flex;
+                     align-self: flex-end;
+                }
+            }
+             .hours-slot::after {
+                 content: "";
+                 display: block;
+                 width: 30px;
+                 float: right;
+                 border-bottom: 1px solid $black;
+            }
+        }
+         .cal-main-box {
+             overflow-y: auto;
+             border-bottom: 1px solid $black;
+             .calender-content {
+                 position: relative;
+                 height:100%;
+                 .event-box {
+                     position:absolute;
+                     background-color: $light_blue;
+                     text-align: center;
+                     display: flex;
+                     align-items: center;
+                     border-right: 1px solid $white;
+                     span {
+                         margin: 0 auto;
+                         color: $white;
+                    }
+                }
+            }
+        }
+    }
+}
