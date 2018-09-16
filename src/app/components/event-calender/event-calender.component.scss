@@ -6,6 +6,7 @@
          font-size: 24px;
     }
      .event-container {
+         background-color: $white;
          margin-bottom: 20px;
          .time-bar {
              display: flex;
@@ -48,6 +49,40 @@
                     }
                 }
             }
+        }
+    }
+
+    .event-form {
+        width: 100%;
+        padding: 20px;
+        background-color: $white;
+        margin-bottom: 10px;
+        .event-name, .event-start-time, .event-end-time {
+            display: flex;
+            flex-direction: row;
+            line-height: 16px;
+            padding: 5x;
+           
+            .field-container {
+                padding: 0px 0px 10px 0px;
+                width: 200px;
+                // width: 80%;
+                
+                input, select {
+                    width: 100%;
+                }
+
+            }
+        }
+
+        .event-btn-container {
+            text-align: left;
+            padding: 10px 0px 0px 0px;
+            button {
+                width: 120x;
+                height: 22px;
+            }
+          
         }
     }
 }
