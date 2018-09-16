@@ -85,7 +85,6 @@ export class EventCalenderComponent implements OnInit {
    * Add a new event to calender.
    */
   addEvent(): void {
-    console.log(this.eventForm.value);
     if (this.isFormValid()) {
       let newEvent: Event = {
         id: (this.eventForm.controls['eventName'].value).trim(),
