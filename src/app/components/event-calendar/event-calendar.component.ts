@@ -4,11 +4,11 @@ import { Event } from '../../models/event.model';
 import * as _ from 'underscore';
 
 @Component({
-  selector: 'event-calender',
-  templateUrl: './event-calender.component.html',
-  styleUrls: ['./event-calender.component.scss']
+  selector: 'event-calendar',
+  templateUrl: './event-calendar.component.html',
+  styleUrls: ['./event-calendar.component.scss']
 })
-export class EventCalenderComponent implements OnInit {
+export class EventCalendarComponent implements OnInit {
 
   eventList: Array<Event> = [
     { id: "New", start: 60, end: 120 },
