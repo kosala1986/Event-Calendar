@@ -41,30 +41,33 @@ export class EventCalendarComponent implements OnInit {
 
   ngOnInit(): void {
     this.eventFormInit();
-    this.calcEventPotition(this.eventList);
+    this.drawEventList(this.eventList);
   }
 
   /** 
-   * Calculate position of the event on the calender.
+   * Calculate position of the events in the calendar.
    */
-  calcEventPotition(eventList: Array<Event>): Array<Event> {
+  drawEventList(eventList: Array<Event>): Array<Event> {
 
-    eventList.forEach((eleOne: Event, evtKeyOne: number) => {
-      let width_divider: number = 0,
-        parallelObjArray = eventList.filter(eleTwo => eleOne['end'] >= eleTwo['start'] && eleOne['start'] <= eleTwo['end']);
 
-      eleOne['width'] = (this.totalWidth / (parallelObjArray.length || 1));
+    let FinalEventListObject: object = this.calcEventsPosition();
+    let finalEventArray: Array<Event> = [];
 
-      let positionx: number = this.totalWidth;
-      parallelObjArray.forEach((ele: Event) => {
-        positionx = positionx - eleOne['width'];
-        ele['left'] = positionx;
-      });
-
-      eleOne['height'] = (eleOne['end'] - eleOne['start']) * 2;
-      eleOne['top'] = eleOne['start'] * 2;
+    Object.keys(FinalEventListObject).forEach(key => {
+      let event: any = this.eventList.find(ele => {
+        return ele.id == key;
+      }) || {};
+      event['width'] = FinalEventListObject[key]['width'];
+      event['left'] = FinalEventListObject[key]['left'];
+      finalEventArray.push(event);
     });
-    return eventList;
+
+    finalEventArray.forEach((ele: Event) => {
+      ele['top'] = ele['start'] * 2;
+      ele['height'] = (ele['end'] - ele['start']) * 2;
+
+    });
+    return finalEventArray;
   }
 
   setStyle(event: object): object {
@@ -73,7 +76,11 @@ export class EventCalendarComponent implements OnInit {
     return styleObj;
   }
 
+  /** 
+   * Event form.
+   */
   eventFormInit(): void {
+
     this.eventForm = this.formBuilder.group({
       eventName: ['', [Validators.required, Validators.maxLength(10)]],
       eventStartTime: ['', [Validators.required]],
@@ -96,19 +103,136 @@ export class EventCalendarComponent implements OnInit {
         this.eventForm.reset();
       } else {
         this.eventList.push(newEvent);
-        this.calcEventPotition(this.eventList);
+        this.drawEventList(this.eventList);
         this.eventForm.reset();
         alert('Your new event has been added!');
       }
 
     }
   }
+
   /** 
    * Check whether event is valid
    */
   isFormValid(): boolean {
     return this.eventForm.valid && (parseInt(this.eventForm.controls['eventStartTime'].value) < parseInt(this.eventForm.controls['eventEndTime'].value));
   }
+
+  /** 
+   * Get event list with positions.
+   * {id: 'event 1', width: xxx, left: xxx}
+   */
+  calcEventsPosition(): object {
+
+    let sortedheightList: Array<object> = this.sortByHeight(this.eventList, false),
+      eventGroupList: object = {}, eventsWithLength = {};
+
+    sortedheightList.forEach(singleObj => {
+      let obj: Event = this.eventList.find(ele => {
+        return ele.id == singleObj['id'];
+      });
+      if (!this.checkIngroup(eventGroupList, singleObj)) {
+        eventGroupList[singleObj['id']] = this.groupEvent(obj);
+      }
+    });
+    eventsWithLength = this.getDivideCount(eventGroupList);
+    return this.getEventPositionList(eventGroupList, eventsWithLength);
+
+  }
+
+  /** 
+   * Get event list with positions.
+   * {width: xxx, left: xxx}
+   */
+  getEventPositionList(groupsMap: object, divisorList: object): object {
+
+    var eventsWithPosition = {};
+    Object.keys(groupsMap).forEach(key => {
+
+      let calendarFullWidth: number = this.totalWidth, widthCount = 0;
+      let eventListByDuration: Array<object> = this.sortByHeight(groupsMap[key], true);
+
+      for (let i: number = 0; i < eventListByDuration.length; i++) {
+
+        let single: object = eventListByDuration[i], floatLeft: number = widthCount;
+        if (divisorList[single['id']] != groupsMap[key].length) {
+
+          let eventBoxWidth: number = calendarFullWidth / divisorList[single['id']];
+          eventsWithPosition[single['id']] = { width: eventBoxWidth, left: floatLeft };
+          widthCount += eventBoxWidth;
+        } else {
+
+          var eventBoxWidth: number = (calendarFullWidth - widthCount) / (eventListByDuration.length - i);
+          eventsWithPosition[single['id']] = { width: eventBoxWidth, left: floatLeft };
+          widthCount += eventBoxWidth;
+        }
+      }
+    });
+    return eventsWithPosition;
+  }
+
+  /** 
+   * Returns events with divisor count
+   */
+  getDivideCount(groupsMap: object): object {
+
+    let list: object = {};
+    this.eventList.forEach(event => {
+      let maxCount: number = 0;
+      Object.keys(groupsMap).forEach(key => {
+        groupsMap[key].forEach(lineObject => {
+          if (lineObject.id == event.id && maxCount <= groupsMap[key].length) {
+            maxCount = groupsMap[key].length;
+          }
+        });
+      });
+      list[event.id] = maxCount;
+    });
+    return list;
+  }
+
+
+  checkIngroup(groupsMap: object, element: object): boolean {
+
+    let result: boolean = false;
+    Object.keys(groupsMap).forEach(key => {
+      (groupsMap[key] || []).forEach(ele => {
+        if (ele.id == element['id']) {
+          result = true;
+        }
+      });
+    });
+    return result;
+  }
+
+
+  /** 
+   * Filter one events
+   */
+  groupEvent(obj: object): Array<Event> {
+
+    return this.eventList.filter(ele => ((obj['end'] > ele['start']) && (obj['start'] < ele['end'])));
+  }
+
+  /** 
+   * Sort evenst by heights
+   * Returns an object with heights
+   */
+  sortByHeight(eventList: any, sortOrder: boolean): Array<object> {
+
+    let mappedList: Array<object> = eventList.map(val => {
+      let obj: Object = { id: val.id, height: val.end - val.start };
+      return obj;
+    }).sort((val1: object, val2: object) => {
+      if (sortOrder) {
+        return val1['height'] < val2['height'];
+      } else {
+        return val1['height'] > val2['height'];
+      }
+    });
+    return mappedList;
+  }
+
 
 
 }

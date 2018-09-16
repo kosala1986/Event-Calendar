@@ -42,11 +42,16 @@
                      text-align: center;
                      display: flex;
                      align-items: center;
-                     border-right: 1px solid $white;
                      span {
                          margin: 0 auto;
                          color: $white;
                     }
+                }
+                .event-box::after { 
+                    content: '';
+                    border-left: 1px solid $white;
+                    position: inherit;
+                    height: 100%;
                 }
             }
         }
