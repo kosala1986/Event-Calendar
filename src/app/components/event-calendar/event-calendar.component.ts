@@ -215,7 +215,7 @@ export class EventCalendarComponent implements OnInit {
   }
 
   /** 
-   * Sort evenst by heights
+   * Sort events by height
    * Returns an object with heights
    */
   sortByHeight(eventList: any, sortOrder: boolean): Array<object> {
