@@ -65,7 +65,7 @@ export class EventCalendarComponent implements OnInit {
     finalEventArray.forEach((ele: Event) => {
       ele['top'] = ele['start'] * 2;
       ele['height'] = (ele['end'] - ele['start']) * 2;
-
+      ele['color'] = this.getRandomColor();
     });
     return finalEventArray;
   }
@@ -231,6 +231,18 @@ export class EventCalendarComponent implements OnInit {
       }
     });
     return mappedList;
+  }
+
+  /** 
+   * Random color
+   */
+  getRandomColor(): string {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
   }
 
 

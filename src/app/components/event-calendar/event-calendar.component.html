@@ -48,7 +48,7 @@
       <div fxFlex="70%" class="cal-main-box">
         <div class="calender-content">
           <div class="event-box" *ngFor="let event of eventList; let first = first; let last = last" [ngStyle]="setStyle(event)"
-            [style.left.px]="event.left" [style.bottom.px]="event.top" [style.height.px]="event.height"
+            [style.left.px]="event.left" [style.bottom.px]="event.top" [style.height.px]="event.height" [style.background-color]="event.color" 
             [style.width.px]="event.width">
             <span>{{event.id}}</span>
           </div>

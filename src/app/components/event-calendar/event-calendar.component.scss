@@ -38,7 +38,7 @@
                  height:100%;
                  .event-box {
                      position:absolute;
-                     background-color: $light_blue;
+                    //  background-color: $light_blue;
                      text-align: center;
                      display: flex;
                      align-items: center;
@@ -46,12 +46,6 @@
                          margin: 0 auto;
                          color: $white;
                     }
-                }
-                .event-box::after { 
-                    content: '';
-                    border-left: 1px solid $white;
-                    position: inherit;
-                    height: 100%;
                 }
             }
         }

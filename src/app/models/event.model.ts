@@ -5,4 +5,5 @@ export class Event {
   left?: number;
   width?: number;
   top?: number;
+  color?: string;
 }
